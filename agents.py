@@ -1,48 +1,40 @@
 import os
 import json
-import re  # <--- Added Regex for smarter cleaning
+import re  
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# 1. Setup
+
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=api_key)
 
-# Use the model that works for you
-MODEL_NAME = 'gemini-2.0-flash' # or 'gemini-1.5-flash'
+MODEL_NAME = 'gemini-2.0-flash' 
 
-# ===========================
-# HELPER: ROBUST JSON CLEANER
-# ===========================
 def clean_json(text):
     """
     Extracts the first valid JSON object from a string, ignoring surrounding text.
     """
     text = text.strip()
     
-    # 1. Try to find JSON inside ```json ... ``` blocks
+  
     match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
     if match:
         text = match.group(1)
-    
-    # 2. If no code blocks, try to find the first '{' and last '}'
+ 
     else:
         start = text.find("{")
         end = text.rfind("}")
         if start != -1 and end != -1:
             text = text[start : end + 1]
-    
-    # 3. Parse
+
     try:
         return json.loads(text)
     except json.JSONDecodeError:
-        # Fallback: Return an error dict so the app doesn't crash
+      
         return {"error": "Failed to parse JSON", "raw_text": text}
 
-# ===========================
-# AGENT 1: PROFILE EXTRACTOR
-# ===========================
+
 class ProfileAgent:
     def __init__(self):
         self.model = genai.GenerativeModel(MODEL_NAME)
