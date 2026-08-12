@@ -3,7 +3,7 @@ import json
 import time
 from agents import ProfileAgent, UniversityAgent, ActionPlanAgent
 
-# 1. PAGE CONFIGURATION (Must be the first line)
+
 st.set_page_config(
     page_title="SetLife-AI",
     page_icon="🎓",
@@ -11,8 +11,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. CUSTOM CSS (To make it look like a real app)
-# 2. CUSTOM CSS (Updated for visibility)
 st.markdown("""
     <style>
     .main {
@@ -51,17 +49,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. HEADER SECTION
+
 col1, col2 = st.columns([1, 5])
 with col1:
-    st.image("https://cdn-icons-png.flaticon.com/512/4712/4712009.png", width=80) # Placeholder Icon
+    st.image("https://cdn-icons-png.flaticon.com/512/4712/4712009.png", width=80) 
 with col2:
     st.title("SetLife-AI")
     st.markdown("**Your AI-Powered Academic Strategist**")
 
 st.divider()
 
-# 4. SIDEBAR (INPUTS)
+
 with st.sidebar:
     st.header("📝 Student Profile")
     st.info("Fill in the details below to generate your strategy.")
@@ -81,14 +79,14 @@ with st.sidebar:
     st.markdown("---")
     submit_btn = st.button("Generate Strategy Plan")
 
-# --- HERO SECTION (Only shows when the app first loads) ---
+
 if not submit_btn:
     st.markdown("## 👋 Welcome to SetLife-AI")
     st.markdown("##### Your personal AI strategist for university admissions.")
     
     st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
     
-    # Create 3 columns for a "How it Works" section
+   
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -106,16 +104,16 @@ if not submit_btn:
     st.markdown("---")
     st.markdown("### 💡 *Pro Tip: Be specific in your 'Story' for better project ideas!*")
 
-# 5. MAIN LOGIC
+
 if submit_btn:
     if not academics or not interests:
         st.error("Please provide at least your Academics and Interests to proceed.")
     else:
-        # --- PROGRESS BAR ANIMATION ---
+       
         progress_text = "Agents are collaborating..."
         my_bar = st.progress(0, text=progress_text)
         
-        # 1. PREPARE DATA
+       
         full_user_prompt = f"""
         ACADEMICS: {academics}
         INTERESTS/STORY: {interests}
@@ -124,27 +122,27 @@ if submit_btn:
         """
 
         try:
-            # --- AGENT 1: PROFILE ---
+           
             my_bar.progress(30, text=" Profile Agent: Analyzing transcript...")
             profile_agent = ProfileAgent()
             profile = profile_agent.analyze(full_user_prompt)
             
-            # --- AGENT 2: UNIVERSITY ---
+            
             my_bar.progress(60, text=" University Agent: Scanning global database...")
             uni_agent = UniversityAgent()
             unis = uni_agent.recommend(profile)
             
-            # --- AGENT 3: PLANNER ---
+            
             my_bar.progress(90, text=" Strategy Agent: Identifying gaps & best strategy to follow...")
             plan_agent = ActionPlanAgent()
             plan = plan_agent.generate_plan(profile, unis)
             
-            my_bar.empty() # Clear the progress bar
+            my_bar.empty() 
 
-            # --- DISPLAY RESULTS IN TABS ---
+            
             tab1, tab2, tab3 = st.tabs(["👤 Student Profile", "🏫 University List", "🚀 Action Plan"])
             
-            # TAB 1: PROFILE SUMMARY
+            
             with tab1:
                 st.subheader("Extracted Profile Analysis")
                 c1, c2 = st.columns(2)
@@ -159,11 +157,11 @@ if submit_btn:
                 
                 
 
-            # TAB 2: UNIVERSITY CARDS
+           
             with tab2:
                 st.subheader("Your Balanced College List")
                 
-                # Helper function for card style
+                
                 def draw_uni_card(type_name, uni_list, color_class):
                     st.markdown(f"### {type_name}")
                     if not uni_list:
@@ -184,21 +182,21 @@ if submit_btn:
                 with col_c:
                     draw_uni_card("🛡️ Safe", unis.get('safe', []), "safe")
 
-            # TAB 3: ACTION PLAN
+            
             with tab3:
                 st.subheader("Strategic Execution Plan")
                 
-                # Gap Analysis Box
+                
                 st.warning(f"**⚠️ Gap Analysis:** {plan.get('gap_analysis', 'N/A')}")
                 
-                # The Spike
+                
                 st.markdown("### 🦄 Your 'Spike' Project")
                 spike = plan.get('the_spike', {})
                 st.info(f"**Project:** {spike.get('title')}\n\n**Brief:** {spike.get('description')}")
                 
                 st.divider()
                 
-                # Timeline
+               
                 st.markdown("### 📅 Monthly Roadmap")
                 for period in plan.get('timeline', []):
                     with st.container():
