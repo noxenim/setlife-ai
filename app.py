@@ -2,32 +2,27 @@ import os
 import json
 import re
 import google.generativeai as genai
-import streamlit as st # <--- Import Streamlit to access Cloud Secrets
+import streamlit as st 
 
-# ===========================
-# 1. SMART KEY LOADER (Works on Cloud & Local)
-# ===========================
+
 try:
-    # Try loading from Streamlit Cloud Secrets first
     api_key = st.secrets["GOOGLE_API_KEY"]
 except:
-    # If that fails (running locally), load from .env file
+    
     from dotenv import load_dotenv
     load_dotenv()
     api_key = os.getenv("GOOGLE_API_KEY")
 
-# Check if key loaded
+
 if not api_key:
     raise ValueError("❌ API Key not found! Check your .env file or Streamlit Secrets.")
 
 genai.configure(api_key=api_key)
 
-# Use the STABLE model to avoid Rate Limits
+
 MODEL_NAME = 'gemini-1.5-flash' 
 
-# ===========================
-# HELPER: ROBUST JSON CLEANER
-# ===========================
+
 def clean_json(text):
     text = text.strip()
     match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
@@ -43,15 +38,14 @@ def clean_json(text):
     except:
         return {}
 
-# ===========================
 # AGENTS
-# ===========================
+
 class ProfileAgent:
     def __init__(self):
         self.model = genai.GenerativeModel(MODEL_NAME)
     
     def analyze(self, user_input):
-        # We don't print() here because it doesn't show in the browser
+       
         prompt = f"""
         You are an expert academic counselor. 
         Analyze the following student description and extract a structured profile.
